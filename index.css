@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-paper: #faf9f6;
+  --color-ink-950: #14121f;
+  --color-ink-900: #1c1930;
+  --color-ink-800: #2a2544;
+  --color-ink-700: #3d3856;
+  --color-ink-500: #6b6584;
+  --color-ink-400: #8f89a8;
+  --color-ink-300: #b6b1c7;
+  --color-ink-200: #d9d6e4;
+  --color-ink-100: #e9e7f0;
+  --color-ink-50: #f4f3f8;
+
+  --color-brand-50: #f2eeff;
+  --color-brand-100: #e5ddff;
+  --color-brand-200: #cdbdff;
+  --color-brand-300: #b3a0ff;
+  --color-brand-400: #9071ff;
+  --color-brand-500: #6d4aff;
+  --color-brand-600: #5a35ec;
+  --color-brand-700: #4a28cf;
+  --color-brand-900: #2c1a77;
+
+  --color-coral-100: #ffe4e0;
+  --color-coral-400: #ff8579;
+  --color-coral-500: #ff6b5e;
+  --color-coral-600: #ef4b3d;
+
+  --color-sun-100: #fff0d1;
+  --color-sun-300: #ffd884;
+  --color-sun-400: #ffc23f;
+  --color-sun-500: #ffb020;
+
+  --color-mint-100: #d7f7ec;
+  --color-mint-400: #43dfb4;
+  --color-mint-500: #2dd4a7;
+  --color-mint-600: #17b58a;
+
+  --color-sky-100: #dbeffd;
+  --color-sky-500: #38bdf8;
+
+  --shadow-soft: 0 10px 40px -12px rgb(20 18 31 / 0.14);
+  --shadow-lift: 0 18px 50px -16px rgb(20 18 31 / 0.24);
+  --shadow-glow: 0 0 0 4px rgb(109 74 255 / 0.14);
+
+  --animate-pointer-tap: pointer-tap 0.13s ease-out;
+  --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-float-slow: float-slow 7s ease-in-out infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+
+  @keyframes pointer-tap {
+    /* Rotation only — horizontal centering comes from the `translate`
+       property (Tailwind's -translate-x-1/2). Duplicating the shift here
+       would compose with it and knock the pointer off-center mid-spin. */
+    0% { transform: rotate(0deg); }
+    45% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+  }
+  @keyframes pop {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-14px); }
+  }
+}
+
+@utility glass {
+  background: rgb(255 255 255 / 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@layer base {
+  /* Mobile header: hard guarantees against horizontal overflow.
+     (Preflight already applies border-box globally; restated explicitly.) */
+  header {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+  header * {
+    box-sizing: border-box;
+  }
+
+  html {
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    @apply bg-paper text-ink-950 font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-brand-500);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  /* Mobile hardening: prevent iOS auto-zoom on form fields and kill
+     double-tap zoom delay on interactive elements. */
+  @media (pointer: coarse) {
+    input, textarea, select {
+      font-size: max(16px, 1em);
+    }
+    a, button, [role="button"] {
+      touch-action: manipulation;
+    }
+  }
+}
+
+/* Notch / home-indicator safe areas for phones in landscape */
+@media (orientation: landscape) and (pointer: coarse) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Fullscreen wheel area */
+.wheel-stage:fullscreen {
+  background: radial-gradient(120% 120% at 50% 0%, #221d3d 0%, #14121f 60%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.wheel-stage:fullscreen .wheel-stage-inner {
+  width: min(92vmin, 780px);
+  max-width: min(92vmin, 780px);
+}
+/* Stop iOS long-press callout / text selection from interrupting a spin */
+.wheel-stage [role="button"] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* thin scrollbars for internal lists */
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-200) transparent;
+}
